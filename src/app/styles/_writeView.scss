@@ -1,0 +1,46 @@
+#write-view {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  height: 100%;
+
+  #article-list {
+    width: 200px;
+    height: 100%;
+    padding: 10px;
+    border-bottom: solid 1px #ccc;
+    overflow-y:auto;
+
+    .article-entry {
+    }
+  }
+
+  #article-editor {
+    flex: 1;
+    height: 100%;
+    padding: 10px;
+    border-left:solid 1px #ccc;
+    border-bottom: solid 1px #ccc;
+    overflow-y:auto;
+
+    .paragraph-with-sidebar {
+      display: flex;
+      flex-flow: row;  
+
+      .public-DraftStyleDefault-block {
+        flex: 1;
+        font-weight: 300;
+      }
+      .paragraph-sidebar {
+        width: 150px;
+        font-size: 10px;
+        margin-left: 20px;
+      }
+    }
+  }
+
+  #embedded-citation {
+    width: 200px;
+    margin: auto;    
+  }
+}
