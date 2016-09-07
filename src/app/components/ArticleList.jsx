@@ -6,7 +6,7 @@ import Loading from 'react-loading';
 
 const propTypes = {
   articles: PropTypes.array,
-  selectedArticle: PropTypes.number.isRequired,
+  selectedArticle: PropTypes.object,
   checkArticlesLoaded: PropTypes.func.isRequired,
   onArticleSelect: PropTypes.func.isRequired
 };
@@ -18,12 +18,12 @@ class ArticleList extends React.Component {
     this.onAddTextEntryButtonClick = this.onAddTextEntryButtonClick.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.checkArticlesLoaded();
   }
 
-  onArticleEntryClick(article) {
-    this.props.onArticleSelect(article.id);
+  onArticleEntryClick(articleIndex) {
+    this.props.onArticleSelect(articleIndex);
   }
 
   onAddTextEntryButtonClick() {
@@ -40,9 +40,9 @@ class ArticleList extends React.Component {
                 <table className="table">
                   <tbody>
                   {
-                    this.props.articles.map(t =>
+                    this.props.articles.map((t, i) =>
                       <tr key={'article-entry'+t.id}>
-                        <td onClick={this.onArticleEntryClick}>
+                        <td onClick={() => this.onArticleEntryClick(i)}>
                           <p>{t.title}</p>
                           <svg className="topic-info" id={"topic-info-"+t.id} width="150" height="25"></svg>
                           <div className={"article-entry" + (t.id===this.props.selectedArticle.id ? '' : 'hidden')}>

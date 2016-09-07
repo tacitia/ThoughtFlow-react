@@ -8,6 +8,7 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 
+import { setCollectionId, setUserId } from './actions/identityActions';
 import App from './components/App';
 import appReducer from './reducers';
 
@@ -16,6 +17,8 @@ const store = createStore(
   appReducer,
   applyMiddleware(thunk, logger)
 );
+store.dispatch(setCollectionId(13));
+store.dispatch(setUserId(1001));
 
 ReactDOM.render(
   (

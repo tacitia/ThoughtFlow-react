@@ -15,8 +15,8 @@ const mapDispatchToProps = (dispatch) => {
     checkArticlesLoaded: (userId) => {
       dispatch(fetchArticlesIfNeeded(userId));
     },
-    onArticleSelect: (articleId) => {
-      dispatch(selectArticle(articleId));
+    onArticleSelect: (articleIndex) => {
+      dispatch(selectArticle(articleIndex));
     }
   };
 };

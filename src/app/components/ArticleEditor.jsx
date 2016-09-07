@@ -4,10 +4,13 @@ import { ContentState, Editor, EditorState } from 'draft-js';
 import ParagraphWithSidebar from '../components/ParagraphWithSidebar';
 //import Paragraph from './Paragraph';
 
-function paragraphBlockRenderer(contentBlock) {
+function paragraphBlockRenderer(recommendations, contentBlock) {
   return {
     component: ParagraphWithSidebar,
     editable: true,
+    props: {
+      recommendations
+    }
   };
 }
 
@@ -28,16 +31,18 @@ class ArticleEditor extends React.Component {
   */
   updateParagraphContent(props) {
     if (!props.article) return;
+    if (this.state.editorState) return;
     const contentState = ContentState.createFromText(props.article.content);
+    const editorState = EditorState.createWithContent(contentState);
     this.setState({
-      editorState: EditorState.createWithContent(contentState)
+      editorState
     });
+    const firstBlock = editorState.getCurrentContent().getFirstBlock();
+    this.props.onSelectedParagraphChange(firstBlock.key, firstBlock.text);
   }
 
   saveText() {
-    console.log('save text')
     const newContent = this.state.editorState.getCurrentContent().getPlainText('\n');
-    console.log(newContent)
     this.props.onSaveArticleRequest(1001, this.props.article.id, this.props.article.title, newContent);
   }
 
@@ -45,16 +50,24 @@ class ArticleEditor extends React.Component {
     super(props);
 
     this.state = {
-      editorState: EditorState.createEmpty(),
+      editorState: null,
+//      editorState: EditorState.createEmpty(),
       hasUnsavedChanges: false,
-      saveStatus: 'saved'
+      saveStatus: 'saved',
+      anchorParagraphKey: null
     };
     this.onChange = (editorState) => {
+      const contentState = editorState.getCurrentContent();
+      const anchorParagraphKey = editorState.getSelection().getAnchorKey();
+      const anchorParagraph = contentState.getBlockForKey(anchorParagraphKey).getText();
+      if (anchorParagraphKey !== this.state.anchorParagraphKey) {
+        this.props.onSelectedParagraphChange(anchorParagraphKey, anchorParagraph);
+      }
       this.setState({
         editorState,
-        hasUnsavedChanges: true
+        hasUnsavedChanges: true,
+        anchorParagraphKey
       });
-      const content = editorState.getCurrentContent();
     };
 //    this.onParagraphSelect = this.onParagraphSelect.bind(this);
 //    this.onCitationSelect = this.onCitationSelect.bind(this);
@@ -120,7 +133,7 @@ class ArticleEditor extends React.Component {
           ? <Editor 
               editorState={this.state.editorState} 
               onChange={this.onChange}
-              blockRendererFn={paragraphBlockRenderer}
+              blockRendererFn={() => paragraphBlockRenderer(this.props.recommendations)}
             /> 
           : <div></div>
         }

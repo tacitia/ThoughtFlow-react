@@ -1,12 +1,13 @@
 import { connect } from 'react-redux';
 
-import { saveArticle } from '../actions/articleActions';
+import { saveArticle, selectParagraph } from '../actions/articleActions';
 import ArticleEditor from '../components/ArticleEditor';
+import { fetchRecommendationIfNeeded } from '../actions/recommendationActions';
 
 const mapStateToProps = (state) => {
-  const selectedArticleId = state.articleReducer.selectedArticle;
   return {
-    article: selectedArticleId > -1 ? state.articleReducer.articles[selectedArticleId] : null
+    article: state.articleReducer.selectedArticle,
+    recommendations: state.recommendationReducer.recommendations
   };
 };
 
@@ -14,6 +15,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onSaveArticleRequest: (userId, articleId, title, content) => {
       dispatch(saveArticle(userId, articleId, title, content, false));      
+    },
+    onSelectedParagraphChange: (key, text) => {
+      dispatch(selectParagraph(key));
+      dispatch(fetchRecommendationIfNeeded(key, text));
     }
   };
 };

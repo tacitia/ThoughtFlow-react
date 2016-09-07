@@ -1,36 +1,51 @@
-import { actionTypes } from '../actions/articleActions';
+import { articleActionTypes } from '../actions/articleActions';
+import { SET_COLLECTION_ID, SET_USER_ID } from '../actions/identityActions';
 
 const initialState = {
   articles: null,
+  collectionId: -1,
   userId: -1,
   isFetching: false,
-  selectedArticle: -1,
-  isSaving: false
+  isSaving: false,
+  selectedArticle: null,
+  selectedParagraph: -1
 };
 const articleReducer = (state = initialState, action) => {
   switch(action.type) {
-    case actionTypes.REQUEST_ARTICLES:
+    case SET_USER_ID:
+      return Object.assign({}, state, {
+        userId: action.payload.userId
+      });
+    case SET_COLLECTION_ID:
+      return Object.assign({}, state, {
+        collectionId: action.payload.collectionId
+      });
+    case articleActionTypes.REQUEST_ARTICLES:
       return Object.assign({}, state, {
         isFetching: true,
-        userId: action.payload.usreId
+        userId: action.payload.userId
       });      
-    case actionTypes.RECEIVE_ARTICLES:
+    case articleActionTypes.RECEIVE_ARTICLES:
       return Object.assign({}, state, {
         isFetching: false,
         articles: action.payload.articles,
-        selectedArticle: action.payload.articles.length > 0 ? 0 : -1
+        selectedArticle: action.payload.articles.length > 0 ? action.payload.articles[0] : null
       });
-    case actionTypes.SELECT_ARTICLES:
+    case articleActionTypes.SELECT_ARTICLE:
       return Object.assign({}, state, {
-        selectedArticle: action.payload.articleId,
+        selectedArticle: state.articles[action.payload.articleIndex],
       }); 
-    case actionTypes.START_ARTICLE_SAVE:
+    case articleActionTypes.START_ARTICLE_SAVE:
       return Object.assign({}, state, {
         isSaving: true
       });
-    case actionTypes.COMPLETE_ARTICLE_SAVE:
+    case articleActionTypes.COMPLETE_ARTICLE_SAVE:
       return Object.assign({}, state, {
         isSaving: false
+      });
+    case articleActionTypes.SELECT_PARAGRAPH:
+      return Object.assign({}, state, {
+        selectedParagraph: action.payload.paragraphKey
       });
     default:
       return state;

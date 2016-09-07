@@ -3,17 +3,18 @@ import fetch from 'isomorphic-fetch';
 import { API_URL } from '../constants/Enumerations';
 import Cookies from 'js-cookie';
 
-export const actionTypes = {
+export const articleActionTypes = {
   REQUEST_ARTICLES: 'REQUEST_ARTICLES',
   RECEIVE_ARTICLES: 'RECEIVE_ARTICLES',
-  SELECT_ARTICLE: 'SELECT_ARTICLE',
   START_ARTICLE_SAVE: 'START_ARTICLE_SAVE',
-  COMPLETE_ARTICLE_SAVE: 'COMPLETE_ARTICLE_SAVE'
+  COMPLETE_ARTICLE_SAVE: 'COMPLETE_ARTICLE_SAVE',
+  SELECT_ARTICLE: 'SELECT_ARTICLE',
+  SELECT_PARAGRAPH: 'SELECT_PARAGRAPH'
 };
 
 function requestArticles(userId) {
   return {
-    type: actionTypes.REQUEST_ARTICLES,
+    type: articleActionTypes.REQUEST_ARTICLES,
     payload: {
       userId
     }
@@ -22,7 +23,7 @@ function requestArticles(userId) {
 
 function receiveArticles(userId, data) {
   return {
-    type: actionTypes.RECEIVE_ARTICLES,
+    type: articleActionTypes.RECEIVE_ARTICLES,
     payload: {
       userId,
       articles: data,
@@ -32,14 +33,14 @@ function receiveArticles(userId, data) {
 
 function startArticleSave() {
   return {
-    type: actionTypes.START_ARTICLE_SAVE,
+    type: articleActionTypes.START_ARTICLE_SAVE,
     payload: {}
   }
 }
 
 function completeArticleSave() {
   return {
-    type: actionTypes.COMPLETE_ARTICLE_SAVE,
+    type: articleActionTypes.COMPLETE_ARTICLE_SAVE,
     payload: {}
   }
 }
@@ -101,11 +102,20 @@ export function saveArticle(userId, articleId, title, content, isNew) {
   }
 }
 
-export function selectArticle(articleId) {
+export function selectArticle(articleIndex) {
   return {
-    type: actionTypes.SELECT_ARTICLE,
+    type: articleActionTypes.SELECT_ARTICLE,
     payload: {
-      articleId
+      articleIndex
     }
   }
+}
+
+export function selectParagraph(paragraphKey) {
+  return {
+    type: articleActionTypes.SELECT_PARAGRAPH,
+    payload: {
+      paragraphKey
+    }
+  };
 }

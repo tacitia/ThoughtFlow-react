@@ -1,16 +1,25 @@
 import { connect } from 'react-redux';
 
+import { fetchEvidenceIfNeeded } from '../actions/evidenceActions';
+import { fetchCitationMapIfNeeded } from '../actions/citationMapActions';
 import EmbeddedCitation from '../components/EmbeddedCitation';
 
 const mapStateToProps = (state) => {
-  const selectedArticleId = state.articleReducer.selectedArticle;
   return {
-    article: selectedArticleId > -1 ? state.articleReducer.articles[selectedArticleId] : null
+    evidence: null,
+    refs: [],
+    cites: []
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    checkEvidenceLoaded: () => {
+      dispatch(fetchEvidenceIfNeeded());
+    },
+    checkCitationMapLoaded: () => {
+      dispatch(fetchCitationMapIfNeeded());
+    },
   };
 };
 
