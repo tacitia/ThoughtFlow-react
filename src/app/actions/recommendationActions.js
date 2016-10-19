@@ -36,7 +36,6 @@ function receiveRecommendation(key, text, recommendation) {
 function fetchRecommendation(state, key, text) {
   return dispatch => {
     dispatch(requestRecommendation());
-    console.log(text);
     return fetch(`http://${API_URL}/api/v1/service/getEvidenceRecommendation/`, {   
       method: 'post',
       body: JSON.stringify({

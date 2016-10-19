@@ -21,12 +21,21 @@ class TopicModel extends React.Component {
   render() {
     const data = {
       terms: this.props.terms,
-      topics: this.props.topics
+      topics: this.props.topics ? this.props.topics.topics : null,
+      connections: this.props.topics ? this.props.topics.termTopicConnections : null,
+      termTopicProperties: this.props.termTopicProperties,
+      selectedTerms: this.props.selectedTerms,
+      selectedTopic: this.props.selectedTopic
     };
 
     return (
       <div>
-        <TopicParallelLists data={data} />
+        <TopicParallelLists 
+          data={data} 
+          onTermSelect={this.props.selectTerm}
+          onTermDeselect={this.props.deselectTerm}
+          onTopicSelect={this.props.selectTopic}
+        />
       </div>
     );
   }

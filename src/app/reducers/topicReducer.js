@@ -10,7 +10,9 @@ const initialState = {
   termTopicMap: null,
   termIndexMap: null,
   topicIdMap: null,
-  minTermTopicProb: 1
+  minTermTopicProb: 1,
+  selectedTerms: [],
+  selectedTopic: null
 };
 
 const topicReducer = (state = initialState, action) => {
@@ -27,7 +29,7 @@ const topicReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         asyncStatus: Object.assign({}, state.asyncStatus, {
           fetchingTopic: true
-        }),
+        })
       });   
     case topicActionTypes.RECEIVE_TOPICS:
       const newState = Object.assign({}, state, {
@@ -36,6 +38,21 @@ const topicReducer = (state = initialState, action) => {
         }),
       }, action.payload.topicInfos)
       return newState;
+    case topicActionTypes.SELECT_TERM:
+      if (state.selectedTerms.indexOf(action.payload.term) >= 0) {
+        return state;
+      }
+      return Object.assign({}, state, {
+        selectedTerms: [...state.selectedTerms, action.payload.term]
+      });
+    case topicActionTypes.DESELECT_TERM:
+      return Object.assign({}, state, {
+        selectedTerms: _.without(state.selectedTerms, action.payload.term)
+      });
+    case topicActionTypes.SELECT_TOPIC:
+      return Object.assign({}, state, {
+        selectedTopic: action.payload.topic
+      });
     default:
       return state;
   }

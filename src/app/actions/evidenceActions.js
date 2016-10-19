@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 export const evidenceActionTypes = {
   REQUEST_CITATION_MAP: 'REQUEST_CITATION_MAP',
   RECEIVE_CITATION_MAP: 'RECEIVE_CITATION_MAP',
-  REQUEST_EVIDENCE: 'REQUEST_EVIDENCE',
+  REQUEST_EVIDENCE: 'REQUEST_EVIDENCE', // Rename evidence in this file to personalEvidence?
   RECEIVE_EVIDENCE: 'RECEIVE_EVIDENCE',
 };
 

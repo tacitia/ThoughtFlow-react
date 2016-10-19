@@ -9,6 +9,9 @@ import Cookies from 'js-cookie';
 export const topicActionTypes = {
   REQUEST_TOPICS: 'REQUEST_TOPICS',
   RECEIVE_TOPICS: 'RECEIVE_TOPICS',
+  SELECT_TERM: 'SELECT_TERM',
+  DESELECT_TERM: 'DESELECT_TERM',
+  SELECT_TOPIC: 'SELECT_TOPIC'
 };
 
 /*******************************************************************/
@@ -17,7 +20,7 @@ export const topicActionTypes = {
 
 function getUniqueTerms(topics) {
   const terms = _(topics)
-    .map(t => JSON.parse(t.terms).map(tuple => tuple[0]))
+    .map(t => t.terms.map(t => t.term))
     .flatten()
     .uniq()
     .without('other terms');
@@ -30,10 +33,9 @@ function getTermTopicCount(terms, topics) {
   const termTopicMap = _.fromPairs(terms.map(t => [t, {topics: [], topicCount: 0, weight: 0}]));
   for (var i in topics) {
     var topic = topics[i];
-    var termTuples = JSON.parse(topic.terms);
-    for (var j in termTuples) {
-      var term = termTuples[j][0];
-      var prob = termTuples[j][1];
+    for (var j in topic.terms) {
+      var term = topic.terms[j].term;
+      var prob = topic.terms[j].prob;
       if (term === 'other terms') continue;
       if (prob < minTermTopicProb) {
         minTermTopicProb = prob;
@@ -51,7 +53,17 @@ function getTermTopicCount(terms, topics) {
 }
 
 function processRawTopics(sourceTopics) {
-  const topics = sourceTopics;
+  const topics = sourceTopics.map(topic => ({
+    id: topic.index,
+    terms: JSON.parse(topic.terms).map(function(termTuple) {
+      return {
+        term: termTuple[0],
+        prob: termTuple[1]
+      }
+    }),
+    evidenceCount: topic.document_count    
+  }));
+  console.log(topics)
   const terms = getUniqueTerms(topics);
   const [termTopicMap, minTermTopicProb] = getTermTopicCount(terms, topics);
   const termIndexMap = _.fromPairs(terms.map(function(term, i) {
@@ -124,4 +136,71 @@ export function fetchTopicsIfNeeded() {
       return dispatch(fetchTopics(getState()))
     }
   }
+}
+
+export function selectTerm(term, logParams) {
+/*
+          Logger.logAction($scope.userId, 'select term', 'v2','1', 'explore', {
+            term: d.term,
+            numSelectedTerms: $scope.selectedTerms.length,
+            prob: d.prob,
+            topic: topic.id,
+            target: 'individual topic'
+          }, function(response) {
+            console.log('action logged: select term');
+          });
+          */
+          /*
+          Logger.logAction($scope.userId, 'select term', 'v2','1', 'explore', {
+            term: d.term,
+            numSelectedTerms: $scope.selectedTerms.length,
+            topicCount: d.properties.topicCount,
+            target: 'term index'
+          }, function(response) {
+            console.log('action logged: select term');
+          }); */
+  return {
+    type: topicActionTypes.SELECT_TERM,
+    payload: {
+      term
+    }
+  };
+}
+
+export function selectTopic(topic) {
+  return {
+    type: topicActionTypes.SELECT_TOPIC,
+    payload: {
+      topic
+    }
+  };
+}
+
+export function deselectTerm(term, logParams) {
+/*
+          Logger.logAction($scope.userId, 'deselect term', 'v2','1', 'explore', {
+            term: d.term,
+            numSelectedTerms: $scope.selectedTerms.length,
+            prob: d.prob,
+            topic: topic.id,
+            target: 'individual topic'
+          }, function(response) {
+            console.log('action logged: deselect term');
+          });
+          */  
+  /*
+  Logger.logAction($scope.userId, 'deselect term', 'v2','1', 'explore', {
+    term: d.term,
+    numSelectedTerms: $scope.selectedTerms.length,
+    topicCount: d.properties.topicCount,
+    target: 'term index'
+  }, function(response) {
+    console.log('action logged: deselect term');
+  }); */
+  return {
+    type: topicActionTypes.DESELECT_TERM,
+    payload: {
+      term
+    }
+  };
 }
